@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Media Gallery</title>
+</head>
+<body>
+    <h1>📷 Media Gallery</h1>
+
+    {% if session.logged_in %}
+        <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <input type="submit" value="Upload">
+        </form>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    {% else %}
+        <a href="{{ url_for('login') }}">Admin Login</a>
+    {% endif %}
+
+    <h2>Gallery</h2>
+    {% for file in files %}
+        <div style="margin-bottom: 20px;">
+            {% if file.endswith(('jpg', 'jpeg', 'png', 'gif')) %}
+                <img src="{{ url_for('static', filename='uploads/' + file) }}" width="200"><br>
+            {% elif file.endswith(('mp4', 'webm')) %}
+                <video width="320" height="240" controls>
+                    <source src="{{ url_for('static', filename='uploads/' + file) }}">
+                </video><br>
+            {% endif %}
+
+            {% if session.logged_in %}
+                <form action="{{ url_for('delete_file', filename=file) }}" method="post" style="display:inline;">
+                    <input type="submit" value="Delete">
+                </form>
+            {% endif %}
+        </div>
+    {% endfor %}
+</body>
+</html>
+
